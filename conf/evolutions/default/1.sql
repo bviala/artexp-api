@@ -5,7 +5,7 @@ CREATE TYPE ARTWORK_SOURCE AS ENUM ('artic', 'smk');
 CREATE TABLE artwork (
     source ARTWORK_SOURCE NOT NULL,
     id VARCHAR(256) NOT NULL,
-    image_id VARCHAR(256) NOT NULL,
+    image_src VARCHAR(256) NOT NULL,
 
     PRIMARY KEY (source, id)
 );

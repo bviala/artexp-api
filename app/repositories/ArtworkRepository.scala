@@ -14,12 +14,12 @@ class ArtworkRepository @Inject() (db: Database)(implicit ec: ExecutionContext) 
   def createOrUpdateArtwork(artwork: Artwork): Future[Boolean] = Future(db.withConnection { implicit connection =>
       val insertSql = SQL("""
         INSERT INTO artwork 
-        VALUES ({source}::ARTWORK_SOURCE, {id}, {image_id})
+        VALUES ({source}::ARTWORK_SOURCE, {id}, {image_src})
         ON CONFLICT (source, id)
         DO
-          UPDATE SET image_id = {image_id}
+          UPDATE SET image_src = {image_src}
       """)
-      .on("id" -> artwork.id, "source" -> artwork.source, "image_id" -> artwork.imageId)
+      .on("id" -> artwork.id, "source" -> artwork.source, "image_src" -> artwork.imageSrc)
 
       // Use Try to catch exceptions and return a Future with meaningful result
       Try {
@@ -31,7 +31,7 @@ class ArtworkRepository @Inject() (db: Database)(implicit ec: ExecutionContext) 
   })
 
   def getAllArtwork(): Future[List[Artwork]] = Future(db.withConnection { implicit connection => 
-    val parser: RowParser[Artwork] = Macro.parser[Artwork]("source", "id", "image_id")
+    val parser: RowParser[Artwork] = Macro.parser[Artwork]("source", "id", "image_src")
     SQL("SELECT * FROM artwork").as(parser.*)
   })
 
