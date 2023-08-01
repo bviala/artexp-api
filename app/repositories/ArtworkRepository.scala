@@ -5,7 +5,7 @@ import play.api.db._
 import anorm._
 import scala.concurrent.{Future, ExecutionContext}
 
-import models.Artwork
+import models._
 import scala.util.{Try, Success, Failure}
 
 
@@ -33,6 +33,18 @@ class ArtworkRepository @Inject() (db: Database)(implicit ec: ExecutionContext) 
   def getAllArtwork(): Future[List[Artwork]] = Future(db.withConnection { implicit connection => 
     val parser: RowParser[Artwork] = Macro.parser[Artwork]("source", "id", "image_src")
     SQL("SELECT * FROM artwork").as(parser.*)
+  })
+
+  def deleteArtwork(artwork: DeleteArtworkDTO): Future[Boolean] = Future(db.withConnection { implicit connection => 
+    val deleteSql = SQL("DELETE from artwork WHERE source = {source}::ARTWORK_SOURCE AND id = {id}")
+      .on("id" -> artwork.id, "source" -> artwork.source)
+
+    Try {
+      deleteSql.executeUpdate()
+    } match {
+      case Success(affectedRows) => affectedRows > 0 // Deletion successful
+      case Failure(_) => false // Deletion failed due to an exception
+    }
   })
 
 }

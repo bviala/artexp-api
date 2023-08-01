@@ -11,4 +11,6 @@
 
 GET     /collection                       controllers.CollectionController.getUserCollection
 
-POST     /collection                      controllers.CollectionController.saveArtworkToCollection
+POST    /collection                       controllers.CollectionController.saveArtworkToCollection
+
+DELETE  /collection                         controllers.CollectionController.deleteArtworkFromCollection
